@@ -10,8 +10,18 @@ async function embedSvgs(data, el = 'icon', urlKey = 'url') {
   dataString = await stringReplaceAsync(
     dataString,
     re,
-    async (match, capture) => await getSvgContents(match, capture),
+    async (match, capture) => await getSvgContents(match, capture, el, urlKey),
   )
+
+  // // USE FOR TESTING OUTPUT
+  // var fs = require('fs')
+  // fs.writeFile('./output.json', dataString, function(err) {
+  //   if (err) {
+  //     return console.log(err)
+  //   }
+
+  //   console.log('The file was saved!')
+  // })
 
   try {
     updatedData = JSON.parse(dataString)
@@ -27,7 +37,7 @@ async function embedSvgs(data, el = 'icon', urlKey = 'url') {
   return updatedData
 }
 
-const getSvgContents = async (match, url) => {
+const getSvgContents = async (match, url, el, urlKey) => {
   try {
     let { data } = await axios.get(url)
     let replacement
@@ -43,7 +53,7 @@ const getSvgContents = async (match, url) => {
 
     if (svgPattern.test(data)) {
       replacement = `"${el}": {
-        [${urlKey}]: "${url}",
+        "${urlKey}": "${url}",
         "svg": "${data}"
       }`
     } else {
