@@ -1,6 +1,6 @@
 # Embed SVGs
 
-Takes an object with nested objects containing links to svgs, then retreives the contents of each svg and returns a new object. This is useful when you need to change svg properties or animate them.
+Takes an object with nested objects containing links to svgs, then retreives the contents of each svg and returns a new object. This is useful when you need the svg markup in order to change properties or animate them.
 
 Can be used in Node and Browser environments. `embedSvgs` is an async function, so use accordingly.
 
