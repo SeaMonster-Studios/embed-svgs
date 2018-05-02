@@ -1,4 +1,7 @@
-export default async function embedSvgs(data) {
+const axios = require('axios')
+const stringReplaceAsync = require('string-replace-async')
+
+async function embedSvgs(data) {
   let dataString = JSON.stringify(data)
   let updatedData
   const pattern = /"icon":{"url":"(.*?)"}/g
@@ -23,7 +26,7 @@ export default async function embedSvgs(data) {
   return updatedData
 }
 
-export const getSvgContents = async (match, url) => {
+const getSvgContents = async (match, url) => {
   try {
     let { data } = await axios.get(url)
     let replacement
@@ -50,3 +53,5 @@ export const getSvgContents = async (match, url) => {
     return match
   }
 }
+
+module.exports = embedSvgs
