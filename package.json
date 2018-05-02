@@ -1,0 +1,25 @@
+{
+  "name": "embed-all-svg",
+  "version": "1.0.0",
+  "description":
+    "Takes an object with nested objects containing links to svgs, then retreives the contents of each svg and returns a new object. This is useful when you need to change svg properties or animate them.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com:SeaMonster-Studios/embed-svgs.git"
+  },
+  "keywords": ["SVG", "inline", "embed", "animate"],
+  "author": "SeaMonster Studios",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/SeaMonster-Studios/embed-all-svg/issues"
+  },
+  "homepage": "https://github.com/SeaMonster-Studios/embed-all-svg#readme",
+  "dependencies": {
+    "axios": "^0.18.0",
+    "string-replace-async": "^1.2.1"
+  }
+}
