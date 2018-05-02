@@ -1,14 +1,15 @@
 const axios = require('axios')
 const stringReplaceAsync = require('string-replace-async')
 
-async function embedSvgs(data) {
+async function embedSvgs(data, el = 'icon', urlKey = 'url') {
   let dataString = JSON.stringify(data)
   let updatedData
-  const pattern = /"icon":{"url":"(.*?)"}/g
+  const pattern = `"${el}":{"${urlKey}":"(.*?)"}`
+  const re = new RegExp(pattern, 'g')
 
   dataString = await stringReplaceAsync(
     dataString,
-    pattern,
+    re,
     async (match, capture) => await getSvgContents(match, capture),
   )
 
@@ -17,7 +18,7 @@ async function embedSvgs(data) {
   } catch (error) {
     /* eslint-disable-next-line no-console */
     console.error(
-      '\nError parsing JSON data after embedding SVG content.\nUsing original data, without SVG embeded content.\n Error:',
+      '\nError parsing JSON data after embedding SVG content.\nUsing original data, without SVG embeded content.\n',
       error,
     )
     updatedData = data
@@ -41,8 +42,8 @@ const getSvgContents = async (match, url) => {
     const svgPattern = new RegExp('<svg.*?</svg>')
 
     if (svgPattern.test(data)) {
-      replacement = `"icon": {
-        "url": "${url}",
+      replacement = `"${el}": {
+        [${urlKey}]: "${url}",
         "svg": "${data}"
       }`
     } else {
