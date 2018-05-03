@@ -47,6 +47,8 @@ const getSvgContents = async (match, url, el, urlKey) => {
       .replace(/<\?xml.*?>/, '')
       .replace(/<!--.*-->/, '')
       .replace(/"/g, "'")
+      .replace(/viewbox/g, 'viewBox')
+      .replace(/xmlns\:xlink/g, 'xmlnsXlink')
       .trim()
 
     const svgPattern = new RegExp('<svg.*?</svg>')
