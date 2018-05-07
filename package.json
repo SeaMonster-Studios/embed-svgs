@@ -1,5 +1,5 @@
 {
-  "name": "embed-svgs",
+  "name": "@seamonster-studios/embed-svgs",
   "version": "1.0.5",
   "description":
     "Takes an object with nested objects containing links to svgs, then retreives the contents of each svg and returns a new object. This is useful when you need to change svg properties or animate them.",
