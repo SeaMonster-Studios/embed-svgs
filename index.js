@@ -1,69 +1,91 @@
 const axios = require('axios')
-const stringReplaceAsync = require('string-replace-async')
+const createDOMPurify = require('dompurify')
+const { JSDOM } = require('jsdom')
 
-async function embedSvgs(data, el = 'icon', urlKey = 'url') {
-  let dataString = JSON.stringify(data)
-  let updatedData
-  const pattern = `"${el}":{"${urlKey}":"(.*?)"}`
-  const re = new RegExp(pattern, 'g')
+const window = new JSDOM('').window
+const DOMPurify = createDOMPurify(window)
 
-  dataString = await stringReplaceAsync(
-    dataString,
-    re,
-    async (match, capture) => await getSvgContents(match, capture, el, urlKey),
-  )
+class embedSvgs {
+  constructor(data, els = ['icon', 'svg'], svgUrlKey = 'url') {
+    this.els = els
+    this.svgUrlKey = svgUrlKey
 
-  // // USE FOR TESTING OUTPUT
-  // var fs = require('fs')
-  // fs.writeFile('./output.json', dataString, function(err) {
-  //   if (err) {
-  //     return console.log(err)
-  //   }
-
-  //   console.log('The file was saved!')
-  // })
-
-  try {
-    updatedData = JSON.parse(dataString)
-  } catch (error) {
-    /* eslint-disable-next-line no-console */
-    console.error(
-      '\nError parsing JSON data after embedding SVG content.\nUsing original data, without SVG embeded content.\n',
-      error,
-    )
-    updatedData = data
+    return this.getAndEmbedSvgs(data)
   }
+  async getAndEmbedSvgs(data) {
+    let embededData
 
-  return updatedData
-}
-
-const getSvgContents = async (match, url, el, urlKey) => {
-  try {
-    let { data } = await axios.get(url)
-    let replacement
-
-    // Replace " with ', because it'll be in JSON and will need the entire svg code to be wrapped in "". Remove whitespace, or it'll break the JSON. Rmove xml and comments.
-    data = data
-      .replace(/<\?xml.*?>/, '')
-      .replace(/<!--.*-->/, '')
-      .replace(/"/g, "'")
-      .replace(/viewbox/g, 'viewBox')
-      .replace(/xmlns\:xlink/g, 'xmlnsXlink')
-      .trim()
-
-    const svgPattern = new RegExp('<svg.*?</svg>')
-
-    if (svgPattern.test(data)) {
-      replacement = `"${el}": {
-        "${urlKey}": "${url}",
-        "svg": "${data}"
-      }`
-    } else {
-      replacement = match
+    try {
+      if (Array.isArray(data)) {
+        embededData = await this.searchArray(data)
+      } else if (typeof data === 'object') {
+        embededData = await this.searchObject(data)
+      } else {
+        throw new Error(
+          'You must provide either an Object or Array to embedSvg.',
+        )
+      }
+    } catch (error) {
+      console.error(error)
     }
-    return replacement
-  } catch (error) {
-    return match
+
+    // // USE FOR TESTING OUTPUT
+    // const fs = require('fs')
+    // fs.writeFile('./output.json', JSON.stringify(embededData), function(err) {
+    //   if (err) {
+    //     return console.log(err)
+    //   }
+    // })
+
+    return embededData
+  }
+  async searchArray(data) {
+    return await Promise.all(
+      data.map(async item => {
+        if (Array.isArray(item)) {
+          item = await this.searchArray(item)
+        } else if (typeof item === 'object') {
+          item = await this.searchObject(item)
+        }
+        return item
+      }),
+    )
+  }
+  async searchObject(data) {
+    for (let key in data) {
+      let property = data[key]
+      if (property) {
+        if (Array.isArray(property)) {
+          data[key] = await this.searchArray(property)
+        } else if (typeof property === 'object' && this.objectHasEls(key)) {
+          data[key] = await this.getAndEmbedSvg(property)
+        } else if (typeof property === 'object') {
+          data[key] = await this.searchObject(property)
+        }
+      }
+    }
+    return data
+  }
+  objectHasEls(propertyName) {
+    for (let value of this.els) {
+      if (propertyName === value) return true
+    }
+    return false
+  }
+  async getAndEmbedSvg(obj) {
+    try {
+      let { data } = await axios.get(obj[this.svgUrlKey])
+
+      data = DOMPurify.sanitize(data)
+        .replace(/"/g, "'")
+        .replace(/(\r\n\t|\n|\r\t)/gm, '')
+
+      obj.svg = data
+
+      return obj
+    } catch (error) {
+      throw new Error(error)
+    }
   }
 }
 

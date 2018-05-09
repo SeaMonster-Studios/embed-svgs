@@ -1,6 +1,6 @@
 # Embed SVGs
 
-Takes an object with nested objects containing links to svgs, then retreives the contents of each svg and returns a new object. This is useful when you need the svg markup in order to change properties or animate them.
+Takes an object or array with nested objects containing links to svgs, then retreives the contents of each svg and returns a new object. This is useful when you need the svg markup in order to change properties or animate them.
 
 Can be used in Node and Browser environments. `embedSvgs` is an async function, so use accordingly.
 
@@ -21,7 +21,7 @@ npm install embed-svgs
 ```
 import embedSvgs from 'embed-svgs'
 ...
-const dataWithEmbededSvgs = await embedSvgs(data, el, urlKey)
+const dataWithEmbededSvgs = await new embedSvgs(data, els, urlKey)
 ```
 
 ### Parameters
@@ -30,12 +30,12 @@ The default
 
 1.  `data`:
 
-* The data object that contains nested object(s) that match `el` (and it's nexted url property, `urlKey`).
+* The data object that contains nested object(s) that match `els` (and it's nexted url property, `urlKey`).
 
-2.  `el`
+2.  `els`
 
-* The name of the nested object that contains the url (`urlKey`) to an svg
-* Has a default value of `icon`
+* An array of strings `['icon', 'svg']`, which have a property (`urlKey`), which is a URL to an svg.
+* Has a default value of `['icon', 'svg']`
 * Example
 
 ```
