@@ -1,17 +1,28 @@
 {
   "name": "@seamonster-studios/embed-svgs",
   "version": "2.1.0",
-  "description":
-    "Takes an object with nested objects containing links to svgs, then retreives the contents of each svg and returns a new object. This is useful when you need to change svg properties or animate them.",
+  "description": "Takes an object with nested objects containing links to svgs, then retreives the contents of each svg and returns a new object. This is useful when you need to change svg properties or animate them.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest --watch",
+    "test:update": "jest -u",
+    "test:coverage": "jest --coverage"
   },
   "repository": {
     "type": "git",
     "url": "git+ssh://git@github.com:SeaMonster-Studios/embed-svgs.git"
   },
-  "keywords": ["SVG", "inline", "embed", "animate"],
+  "keywords": [
+    "SVG",
+    "inline",
+    "embed",
+    "animate"
+  ],
+  "jest": {
+    "collectCoverageFrom": [
+      "index.js"
+    ]
+  },
   "author": "SeaMonster Studios",
   "license": "MIT",
   "bugs": {
@@ -24,5 +35,10 @@
     "html-to-json": "^0.6.0",
     "jsdom": "^11.10.0",
     "svgo": "^1.0.5"
+  },
+  "devDependencies": {
+    "faker": "^4.1.0",
+    "jest": "^22.4.3",
+    "lodash": "^4.17.10"
   }
 }
