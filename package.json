@@ -1,6 +1,6 @@
 {
   "name": "@seamonster-studios/embed-svgs",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description":
     "Takes an object with nested objects containing links to svgs, then retreives the contents of each svg and returns a new object. This is useful when you need to change svg properties or animate them.",
   "main": "index.js",
@@ -21,6 +21,8 @@
   "dependencies": {
     "axios": "^0.18.0",
     "dompurify": "^1.0.4",
-    "jsdom": "^11.10.0"
+    "html-to-json": "^0.6.0",
+    "jsdom": "^11.10.0",
+    "svgo": "^1.0.5"
   }
 }

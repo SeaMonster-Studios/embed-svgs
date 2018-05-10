@@ -1,11 +1,13 @@
 const axios = require('axios')
 const createDOMPurify = require('dompurify')
+const htmlToJson = require('html-to-json')
 const { JSDOM } = require('jsdom')
+const SVGO = require('svgo/lib/svgo')
 
 const window = new JSDOM('').window
 const DOMPurify = createDOMPurify(window)
 
-class embedSvgs {
+class EmbedSvgs {
   constructor(data, els = ['icon', 'svg'], svgUrlKey = 'url') {
     this.els = els
     this.svgUrlKey = svgUrlKey
@@ -76,17 +78,120 @@ class embedSvgs {
     try {
       let { data } = await axios.get(obj[this.svgUrlKey])
 
-      data = DOMPurify.sanitize(data)
-        .replace(/"/g, "'")
-        .replace(/(\r\n\t|\n|\r\t)/gm, '')
+      const svgo = new SVGO({
+        full: true,
+        plugins: [
+          { convertShapeToPath: { convertArcs: true } },
+          { cleanupAttrs: true },
+          { removeXMLNS: true },
+          { removeComments: true },
+          { removeTitle: true },
+          { removeDesc: true },
+          { convertTransform: true },
+          { removeUselessDefs: true },
+          { removeEmptyAttrs: true },
+          { removeEmptyText: true },
+          { removeEmptyContainers: true },
+          { convertPathData: true },
+          { cleanupIDs: true },
+          { convertStyleToAttrs: true },
+        ],
+      })
 
-      obj.svg = data
+      data = DOMPurify.sanitize(data)
+      let { data: optimizedData } = await svgo.optimize(data)
+      optimizedData = optimizedData.replace(/"/g, "'")
+
+      obj.svg = optimizedData
+      obj.svgElements = await this.buildSvgObject(optimizedData)
 
       return obj
     } catch (error) {
       throw new Error(error)
     }
   }
+  async buildSvgObject(svgString) {
+    const { text } = await htmlToJson.parse(svgString, {
+      text: function($doc) {
+        let obj = {
+          styles: {},
+          paths: [],
+        }
+
+        // START parse <style></style>
+        const styleTag = $doc.find('style')
+        if (
+          styleTag &&
+          styleTag.length &&
+          styleTag[0].children &&
+          styleTag[0].children.length &&
+          styleTag[0].children[0].data
+        ) {
+          const stylesData = styleTag[0].children[0].data
+          const stylesList = stylesData.split('}')
+
+          for (let style of stylesList) {
+            const styleChunks = style.split('{')
+            if (styleChunks.length && styleChunks[0] !== '') {
+              const className = styleChunks[0].replace('.', '').replace(' ', '')
+              const values = styleChunks[1].split(';')
+
+              obj.styles[className] = []
+
+              for (let value of values) {
+                const parts = value.split(':')
+                if (parts.length && parts[0] !== '') {
+                  const styleName = parts[0]
+                  const styleValue = parts[1]
+
+                  obj.styles[className].push({
+                    [styleName]: styleValue,
+                  })
+                }
+              }
+            }
+          }
+        }
+        // END parse <style></style>
+
+        // put all paths with their attributes in an array
+        const els = $doc.find('path')
+
+        for (let key in els) {
+          const el = els[key]
+
+          if (el.name === 'path') {
+            let path = {}
+
+            for (let attrName in el.attribs) {
+              path[attrName] = el.attribs[attrName]
+
+              // Bind styles to each path that has corresponding class
+              if (attrName === 'class') {
+                const className = el.attribs[attrName]
+                const styles = obj.styles[className]
+
+                if (styles) {
+                  styles.map(style => {
+                    const propertyName = Object.keys(style)[0]
+
+                    if (propertyName && !path.hasOwnProperty(propertyName)) {
+                      path[propertyName] = style[propertyName]
+                    }
+                  })
+                }
+              }
+            }
+            obj.paths.push(path)
+          }
+        }
+        return obj
+      },
+    })
+    return text
+  }
 }
 
-module.exports = embedSvgs
+new EmbedSvgs(require('./test'))
+
+module.exports = EmbedSvgs

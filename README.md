@@ -1,8 +1,8 @@
 # Embed SVGs
 
-Takes an object or array with nested objects containing links to svgs, then retreives the contents of each svg and returns a new object. This is useful when you need the svg markup in order to change properties or animate them.
+Takes an object or array with nested objects containing links to svgs, then retreives the contents of each svg and returns a new object. The contents are broken up into two properties, `svg`, and `svgElements`. `svg` is the svg data in a string format. `svgElements` is an object that will contain the properties of each svg, including all paths in a `paths` array. The paths array also has all properties pertaining to that path, including each style matching classes assigned to it. This data can be useful when you need the svg markup or properties in order to change style properties or animate them.
 
-Can be used in Node and Browser environments. `embedSvgs` is an async function, so use accordingly.
+Can be used in Node and Browser environments. `EmbedSvgs` is an async function, so use accordingly.
 
 ## Install
 
@@ -19,9 +19,9 @@ npm install embed-svgs
 ## Import & Usage
 
 ```
-import embedSvgs from 'embed-svgs'
+import EmbedSvgs from 'embed-svgs'
 ...
-const dataWithEmbededSvgs = await new embedSvgs(data, els, urlKey)
+const dataWithEmbededSvgs = await new EmbedSvgs(data, els, urlKey)
 ```
 
 ### Parameters
@@ -59,4 +59,4 @@ You have a static site generator that pulls down all of your data during build. 
 
 On the frontend you need the SVG markup (to change color, animate, etc.), and you're using a modern library like React and don't want to have to query the DOM for each view/page/component to get SVGs.
 
-`embedSvgs` allows you to crawl all that data, fetch all the SVGs, and add an SVG property onto it's parent object. Then the SVG markup is ready for use in your components.
+`EmbedSvgs` allows you to crawl all that data, fetch all the SVGs, and add an SVG property onto it's parent object. Then the SVG markup is ready for use in your components.
