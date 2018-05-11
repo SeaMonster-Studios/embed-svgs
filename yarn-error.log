@@ -1,5 +1,5 @@
 Arguments: 
-  /Users/logan/.nvm/versions/node/v9.5.0/bin/node /Users/logan/.nvm/versions/node/v9.5.0/bin/yarn test
+  /Users/logan/.nvm/versions/node/v9.5.0/bin/node /Users/logan/.nvm/versions/node/v9.5.0/bin/yarn push
 
 PATH: 
   /Users/logan/.nvm/versions/node/v9.5.0/bin:/usr/local/sbin:/Users/logan/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Applications/VMware Fusion.app/Contents/Public:/usr/local/sbin:/Users/logan/bin:/Users/logan/.composer/vendor/bin:/Users/logan/Library/Android/sdk/tools:/Users/logan/Library/Android/sdk/platform-tools:/Applications/MAMP/Library/bin/:/Users/logan/.composer/vendor/bin:/Users/logan/Library/Android/sdk/tools:/Users/logan/Library/Android/sdk/platform-tools:/Users/logan/Library/Android/sdk/tools:/Users/logan/Library/Android/sdk/platform-tools:/Applications/MAMP/Library/bin/
@@ -16,10 +16,12 @@ Platform:
 npm manifest: 
   {
     "name": "@seamonster-studios/embed-svgs",
-    "version": "2.1.0",
-    "description": "Takes an object with nested objects containing links to svgs, then retreives the contents of each svg and returns a new object. This is useful when you need to change svg properties or animate them.",
+    "version": "2.1.2",
+    "description":
+      "Takes an object with nested objects containing links to svgs, then retreives the contents of each svg and returns a new object. This is useful when you need to change svg properties or animate them.",
     "main": "index.js",
     "scripts": {
+      "test": "jest --watch",
       "test:update": "jest -u",
       "test:coverage": "jest --coverage"
     },
@@ -27,20 +29,9 @@ npm manifest:
       "type": "git",
       "url": "git+ssh://git@github.com:SeaMonster-Studios/embed-svgs.git"
     },
-    "keywords": [
-      "SVG",
-      "inline",
-      "embed",
-      "animate"
-    ],
+    "keywords": ["SVG", "inline", "embed", "animate"],
     "jest": {
-      "collectCoverageFrom": [
-        "index.js"
-      ],
-      "moduleNameMapper": {
-        "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "src/__mocks__/fileMock.js",
-        "\\.(css|less)$": "identity-obj-proxy"
-      }
+      "collectCoverageFrom": ["index.js"]
     },
     "author": "SeaMonster Studios",
     "license": "MIT",
@@ -57,9 +48,7 @@ npm manifest:
     },
     "devDependencies": {
       "faker": "^4.1.0",
-      "identity-obj-proxy": "^3.0.0",
-      "jest": "^22.4.3",
-      "lodash": "^4.17.10"
+      "jest": "^22.4.3"
     }
   }
 
@@ -1285,10 +1274,6 @@ Lockfile:
       ajv "^5.1.0"
       har-schema "^2.0.0"
   
-  harmony-reflect@^1.4.6:
-    version "1.6.0"
-    resolved "https://registry.yarnpkg.com/harmony-reflect/-/harmony-reflect-1.6.0.tgz#9c28a77386ec225f7b5d370f9861ba09c4eea58f"
-  
   has-ansi@^2.0.0:
     version "2.0.0"
     resolved "https://registry.yarnpkg.com/has-ansi/-/has-ansi-2.0.0.tgz#34f5049ce1ecdf2b0649af3ef24e45ed35416d91"
@@ -1406,12 +1391,6 @@ Lockfile:
     resolved "https://registry.yarnpkg.com/iconv-lite/-/iconv-lite-0.4.23.tgz#297871f63be507adcfbfca715d0cd0eed84e9a63"
     dependencies:
       safer-buffer ">= 2.1.2 < 3"
-  
-  identity-obj-proxy@^3.0.0:
-    version "3.0.0"
-    resolved "https://registry.yarnpkg.com/identity-obj-proxy/-/identity-obj-proxy-3.0.0.tgz#94d2bda96084453ef36fbc5aaec37e0f79f1fc14"
-    dependencies:
-      harmony-reflect "^1.4.6"
   
   ignore-walk@^3.0.1:
     version "3.0.1"
@@ -2156,7 +2135,7 @@ Lockfile:
     version "3.10.1"
     resolved "https://registry.yarnpkg.com/lodash/-/lodash-3.10.1.tgz#5bf45e8e49ba4189e17d482789dfd15bd140b7b6"
   
-  lodash@^4.13.1, lodash@^4.14.0, lodash@^4.17.10, lodash@^4.17.4:
+  lodash@^4.13.1, lodash@^4.14.0, lodash@^4.17.4:
     version "4.17.10"
     resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.10.tgz#1b7793cf7259ea38fb3661d4d38b3260af8ae4e7"
   
@@ -3503,7 +3482,7 @@ Lockfile:
       window-size "0.1.0"
 
 Trace: 
-  Error: Command "test" not found. Did you mean "jest"?
+  Error: Command "push" not found.
       at new MessageError (/Users/logan/.nvm/versions/node/v9.5.0/lib/node_modules/yarn/lib/cli.js:186:110)
       at /Users/logan/.nvm/versions/node/v9.5.0/lib/node_modules/yarn/lib/cli.js:87307:17
       at Generator.next (<anonymous>)

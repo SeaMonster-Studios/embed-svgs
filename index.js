@@ -162,11 +162,14 @@ async function buildSvgObject(svgString) {
       // put all paths with their attributes in an array
       const els = $doc.find('path')
 
+      let count = 0
       for (let key in els) {
         const el = els[key]
 
         if (el.name === 'path') {
-          let path = {}
+          let path = {
+            id: `svg-element-path-id-${count}`,
+          }
 
           for (let attrName in el.attribs) {
             path[attrName] = el.attribs[attrName]
@@ -192,6 +195,7 @@ async function buildSvgObject(svgString) {
           }
           obj.paths.push(path)
         }
+        count += 1
       }
       return obj
     },
