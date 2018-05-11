@@ -1,6 +1,6 @@
 # Embed SVGs
 
-Takes an object or array with nested objects containing links to svgs, then retreives the contents of each svg and returns a new object. The contents are broken up into two properties, `svg`, and `svgElements`. `svg` is the svg data in a string format. `svgElements` is an object that will contain the properties of each svg, including all paths in a `paths` array. The paths array also has all properties pertaining to that path, including each style matching classes assigned to it. This data can be useful when you need the svg markup or properties in order to change style properties or animate them.
+Takes an object or array with nested objects containing links to svgs, then retreives the contents of each svg and returns a new object. The contents are broken up into two properties, `svgString`, and `svgElements`. `svgString` is the svg data in a string format. `svgElements` is an object that will contain the properties of each svg, including all paths in a `paths` array. The paths array also has all properties pertaining to that path, including each style matching classes assigned to it. This data can be useful when you need the svg markup or properties in order to change style properties or animate them.
 
 Can be used in Node and Browser environments. `embedSvgs` is an async function, so use accordingly.
 
@@ -26,9 +26,9 @@ const dataWithEmbededSvgs = await embedSvgs(data, els, urlKey)
 
 ### Parameters
 
-The default
-
 1.  `data`:
+
+2.  `jsx`: Bool. Are the svgs inteded to be used within jsx/react. If so, each path's properties will be camel cassed.
 
 * The data object that contains nested object(s) that match `els` (and it's nexted url property, `urlKey`).
 

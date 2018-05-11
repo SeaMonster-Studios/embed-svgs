@@ -7,11 +7,17 @@ const SVGO = require('svgo/lib/svgo')
 const window = new JSDOM('').window
 const DOMPurify = createDOMPurify(window)
 
-let els, svgUrlKey
+let els, svgUrlKey, forJSX
 
-function embedSvgs(data, elements = ['icon', 'svg'], urlKey = 'url') {
+function embedSvgs(
+  data,
+  jsx = false,
+  elements = ['icon', 'svg'],
+  urlKey = 'url',
+) {
   els = elements
   svgUrlKey = urlKey
+  forJSX = jsx
 
   return getAndEmbedSvgs(data)
 }
@@ -144,7 +150,7 @@ async function buildSvgObject(svgString) {
                 for (let value of values) {
                   const parts = value.split(':')
                   if (parts.length && parts[0] !== '') {
-                    const styleName = parts[0]
+                    const styleName = forJSX ? snakeToCamel(parts[0]) : parts[0]
                     const styleValue = parts[1]
 
                     obj.styles[className].push({
@@ -172,8 +178,7 @@ async function buildSvgObject(svgString) {
           }
 
           for (let attrName in el.attribs) {
-            path[attrName] = el.attribs[attrName]
-
+            path.className = el.attribs[attrName]
             // Bind styles to each path that has corresponding class
             if (attrName === 'class') {
               const classNames = el.attribs[attrName].split(' ')
@@ -191,6 +196,8 @@ async function buildSvgObject(svgString) {
                   })
                 }
               })
+            } else {
+              path[attrName] = el.attribs[attrName]
             }
           }
           obj.paths.push(path)
@@ -201,6 +208,12 @@ async function buildSvgObject(svgString) {
     },
   })
   return text
+}
+
+function snakeToCamel(s) {
+  return s.replace(/(\-\w)/g, function(m) {
+    return m[1].toUpperCase()
+  })
 }
 
 module.exports = embedSvgs
