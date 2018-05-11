@@ -173,18 +173,21 @@ async function buildSvgObject(svgString) {
 
             // Bind styles to each path that has corresponding class
             if (attrName === 'class') {
-              const className = el.attribs[attrName]
-              const styles = obj.styles[className]
+              const classNames = el.attribs[attrName].split(' ')
 
-              if (styles) {
-                styles.map(style => {
-                  const propertyName = Object.keys(style)[0]
+              classNames.map(className => {
+                const styles = obj.styles[className]
 
-                  if (propertyName && !path.hasOwnProperty(propertyName)) {
-                    path[propertyName] = style[propertyName]
-                  }
-                })
-              }
+                if (styles) {
+                  styles.map(style => {
+                    const propertyName = Object.keys(style)[0]
+
+                    if (propertyName && !path.hasOwnProperty(propertyName)) {
+                      path[propertyName] = style[propertyName]
+                    }
+                  })
+                }
+              })
             }
           }
           obj.paths.push(path)

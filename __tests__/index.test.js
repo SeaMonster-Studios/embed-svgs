@@ -35,19 +35,23 @@ it('Expects the paths array to have items, and that each item has a `d` property
   })
 })
 
-it('Expects each path with a class, which class has styles, to have those styles as properties on that same path', async () => {
+it('Expects each path with a classes, where each class has styles, to have those styles as properties on that same path', async () => {
   const instances = await getInstancesOfObjectDeep(results, ['icon', 'svg'])
 
   instances.map(instance => {
     instance.svgElements.paths.map(path => {
       if (path.hasOwnProperty('class')) {
-        const styles = instance.svgElements.styles[path.class]
-        for (let key in styles) {
-          const styleName = Object.keys(styles[key])[0]
-          const styleValue = styles[key][styleName]
+        const classes = path.class.split(' ')
 
-          expect(path[styleName]).toBe(styleValue)
-        }
+        classes.map(className => {
+          const styles = instance.svgElements.styles[className]
+          for (let key in styles) {
+            const styleName = Object.keys(styles[key])[0]
+            const styleValue = styles[key][styleName]
+
+            expect(path[styleName]).toBe(styleValue)
+          }
+        })
       }
     })
   })
