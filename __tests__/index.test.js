@@ -1,5 +1,5 @@
 //
-const { getInstancesOfObjectDeep } = require('../utils/testing')
+const { getInstancesOfObjectDeep, isCamelCase } = require('../utils/testing')
 const mockData = require('../__mocks__/mock-data')
 const embedSvgs = require('../index')
 
@@ -8,7 +8,7 @@ const faker = require('faker')
 let results
 
 beforeEach(async () => {
-  results = await embedSvgs(mockData)
+  results = await embedSvgs(mockData, true)
 })
 
 it('Expects svgString and svgElement properties with values within each object that has an `icon` or `svg` property/nested object', async () => {
@@ -50,6 +50,9 @@ it('Expects each path with a classes, where each class has styles, to have those
             const styleValue = styles[key][styleName]
 
             expect(path[styleName]).toBe(styleValue)
+
+            // since second param for embedSvgs was given true, we want to make sure all styleNames are camel case
+            expect(isCamelCase(styleName)).toBe(true)
           }
         })
       }

@@ -41,6 +41,25 @@ async function searchObject(data) {
   return data
 }
 
+function isCamelCase(str) {
+  let strArr = str.split('')
+  let string = ''
+  for (let i in strArr) {
+    if (strArr[i].toUpperCase() === strArr[i]) {
+      string += '-' + strArr[i].toLowerCase()
+    } else {
+      string += strArr[i]
+    }
+  }
+
+  if (string.toCamelCase(true) === str) {
+    return true
+  } else {
+    return false
+  }
+}
+
 module.exports = {
   getInstancesOfObjectDeep,
+  isCamelCase,
 }
