@@ -98,7 +98,7 @@ async function getAndEmbedSvg(obj) {
     let { data: optimizedData } = await svgo.optimize(data)
     optimizedData = optimizedData.replace(/"/g, "'")
 
-    obj.svg = optimizedData
+    obj.svgString = optimizedData
     obj.svgElements = await buildSvgObject(optimizedData)
 
     return obj
@@ -130,22 +130,30 @@ async function buildSvgObject(svgString) {
         for (let style of stylesList) {
           const styleChunks = style.split('{')
           if (styleChunks.length && styleChunks[0] !== '') {
-            const className = styleChunks[0].replace('.', '').replace(' ', '')
+            const classNames = styleChunks[0].replace('.', '').replace(' ', '')
             const values = styleChunks[1].split(';')
 
-            obj.styles[className] = []
+            classNames.split(',').map(className => {
+              if (className) {
+                className = className.replace('.', '')
 
-            for (let value of values) {
-              const parts = value.split(':')
-              if (parts.length && parts[0] !== '') {
-                const styleName = parts[0]
-                const styleValue = parts[1]
+                if (!obj.styles.hasOwnProperty(className)) {
+                  obj.styles[className] = []
+                }
 
-                obj.styles[className].push({
-                  [styleName]: styleValue,
-                })
+                for (let value of values) {
+                  const parts = value.split(':')
+                  if (parts.length && parts[0] !== '') {
+                    const styleName = parts[0]
+                    const styleValue = parts[1]
+
+                    obj.styles[className].push({
+                      [styleName]: styleValue,
+                    })
+                  }
+                }
               }
-            }
+            })
           }
         }
       }
